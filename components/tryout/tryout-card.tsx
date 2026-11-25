@@ -57,7 +57,7 @@ export default function TryoutCard({
 
       {isPublished ? (
         <Link
-          href={`/dashboard/tryout/${id}/attempt`}
+          href={`/dashboard/tryout/${id}`}
           className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
         >
           Mulai Tryout

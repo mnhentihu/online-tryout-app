@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
 import {
   CheckCircle2,
   XCircle,
@@ -8,6 +9,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+
 type ResultPageProps = {
   params: Promise<{ id: string }>;
 };
@@ -15,20 +19,107 @@ type ResultPageProps = {
 export default async function ResultPage({ params }: ResultPageProps) {
   const { id } = await params;
 
-  // Dummy result - nantinya diambil dari database
-  const result = {
-    title: "Tryout JavaScript Dasar",
-    score: 80,
-    totalQuestions: 10,
-    totalStatements: 30,
-    correctAnswers: 24,
-    wrongAnswers: 6,
-    unanswered: 0,
-    duration: "24 menit 35 detik",
-    completedAt: "25 November 2026",
-  };
+  // Verifikasi user
+  const supabase = await createClient();
 
-  const isPassed = result.score >= 70;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // Ambil attempt terakhir yang sudah disubmit oleh user
+  const attempt = await prisma.tryoutAttempt.findFirst({
+    where: {
+      userId: user.id,
+      tryoutId: id,
+      submittedAt: {
+        not: null,
+      },
+    },
+    orderBy: {
+      submittedAt: "desc",
+    },
+    select: {
+      score: true,
+      startedAt: true,
+      submittedAt: true,
+      tryout: {
+        select: {
+          title: true,
+          questions: {
+            select: {
+              statements: {
+                select: {
+                  id: true,
+                  isTrue: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      answers: {
+        select: {
+          statementId: true,
+          answer: true,
+        },
+      },
+    },
+  });
+
+  if (!attempt || !attempt.submittedAt) {
+    notFound();
+  }
+
+  // Hitung hasil berdasarkan jawaban di database
+  const statements = attempt.tryout.questions.flatMap(
+    (question) => question.statements,
+  );
+
+  const answerMap = new Map(
+    attempt.answers.map((answer) => [answer.statementId, answer.answer]),
+  );
+
+  const correctAnswers = statements.filter(
+    (statement) => answerMap.get(statement.id) === statement.isTrue,
+  ).length;
+
+  const wrongAnswers = statements.filter(
+    (statement) =>
+      answerMap.has(statement.id) &&
+      answerMap.get(statement.id) !== statement.isTrue,
+  ).length;
+
+  const unanswered = statements.length - correctAnswers - wrongAnswers;
+
+  const totalQuestions = attempt.tryout.questions.length;
+  const totalStatements = statements.length;
+  const score = attempt.score ?? 0;
+
+  const isPassed = score >= 70;
+
+  // Hitung durasi pengerjaan
+  const durationSeconds = Math.max(
+    0,
+    Math.floor(
+      (attempt.submittedAt.getTime() - attempt.startedAt.getTime()) / 1000,
+    ),
+  );
+
+  const durationMinutes = Math.floor(durationSeconds / 60);
+  const remainingSeconds = durationSeconds % 60;
+
+  const duration = `${durationMinutes} menit ${remainingSeconds} detik`;
+
+  // Format tanggal menggunakan zona waktu Indonesia
+  const completedAt = new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "long",
+    timeStyle: "short",
+    timeZone: "Asia/Jakarta",
+  }).format(attempt.submittedAt);
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
@@ -45,10 +136,10 @@ export default async function ResultPage({ params }: ResultPageProps) {
       </div>
 
       <div className="rounded-2xl border bg-card p-8 text-center">
-        <p className="text-sm text-muted-foreground">{result.title}</p>
+        <p className="text-sm text-muted-foreground">{attempt.tryout.title}</p>
 
         <div className="my-6">
-          <p className="text-6xl font-bold tracking-tight">{result.score}</p>
+          <p className="text-6xl font-bold tracking-tight">{score}</p>
           <p className="mt-2 text-sm text-muted-foreground">dari 100 poin</p>
         </div>
 
@@ -69,7 +160,7 @@ export default async function ResultPage({ params }: ResultPageProps) {
             <CheckCircle2 className="size-5" />
             <span className="text-sm font-medium">Benar</span>
           </div>
-          <p className="text-3xl font-bold">{result.correctAnswers}</p>
+          <p className="text-3xl font-bold">{correctAnswers}</p>
         </div>
 
         <div className="rounded-xl border bg-card p-5">
@@ -77,7 +168,7 @@ export default async function ResultPage({ params }: ResultPageProps) {
             <XCircle className="size-5" />
             <span className="text-sm font-medium">Salah</span>
           </div>
-          <p className="text-3xl font-bold">{result.wrongAnswers}</p>
+          <p className="text-3xl font-bold">{wrongAnswers}</p>
         </div>
 
         <div className="rounded-xl border bg-card p-5">
@@ -85,7 +176,7 @@ export default async function ResultPage({ params }: ResultPageProps) {
             <CircleHelp className="size-5" />
             <span className="text-sm font-medium">Tidak Dijawab</span>
           </div>
-          <p className="text-3xl font-bold">{result.unanswered}</p>
+          <p className="text-3xl font-bold">{unanswered}</p>
         </div>
       </div>
 
@@ -95,24 +186,22 @@ export default async function ResultPage({ params }: ResultPageProps) {
         <div className="space-y-4 text-sm">
           <div className="flex justify-between gap-4">
             <span className="text-muted-foreground">Jumlah soal</span>
-            <span className="font-medium">{result.totalQuestions} soal</span>
+            <span className="font-medium">{totalQuestions} soal</span>
           </div>
 
           <div className="flex justify-between gap-4">
             <span className="text-muted-foreground">Total pernyataan</span>
-            <span className="font-medium">
-              {result.totalStatements} pernyataan
-            </span>
+            <span className="font-medium">{totalStatements} pernyataan</span>
           </div>
 
           <div className="flex justify-between gap-4">
             <span className="text-muted-foreground">Durasi pengerjaan</span>
-            <span className="font-medium">{result.duration}</span>
+            <span className="font-medium">{duration}</span>
           </div>
 
           <div className="flex justify-between gap-4">
             <span className="text-muted-foreground">Selesai pada</span>
-            <span className="font-medium">{result.completedAt}</span>
+            <span className="text-right font-medium">{completedAt}</span>
           </div>
         </div>
       </div>

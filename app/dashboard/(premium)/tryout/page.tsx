@@ -1,37 +1,24 @@
 import TryoutCard from "@/components/tryout/tryout-card";
 import { Search } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-const tryouts = [
-  {
-    id: "tryout-1",
-    title: "Simulasi Dasar Pemrograman",
-    description:
-      "Uji pengetahuan dasar HTML, CSS, JavaScript, dan konsep pemrograman.",
-    duration: 30,
-    totalQuestions: 10,
-    isPublished: true,
-  },
-  {
-    id: "tryout-2",
-    title: "Simulasi Web Development",
-    description:
-      "Uji pemahaman mengenai frontend, backend, dan pengembangan website.",
-    duration: 30,
-    totalQuestions: 10,
-    isPublished: true,
-  },
-  {
-    id: "tryout-3",
-    title: "Simulasi Database",
-    description:
-      "Latihan memahami database relasional, SQL, dan pengelolaan data.",
-    duration: 30,
-    totalQuestions: 10,
-    isPublished: false,
-  },
-];
+export default async function TryoutPage() {
+  const tryouts = await prisma.tryout.findMany({
+    where: {
+      isPublished: true,
+    },
+    include: {
+      _count: {
+        select: {
+          questions: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
-export default function TryoutPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <div>
@@ -55,15 +42,32 @@ export default function TryoutPage() {
         </div>
 
         <p className="text-sm text-muted-foreground">
-          {tryouts.filter((item) => item.isPublished).length} tryout tersedia
+          {tryouts.length} tryout tersedia
         </p>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {tryouts.map((tryout) => (
-          <TryoutCard key={tryout.id} {...tryout} />
-        ))}
-      </div>
+      {tryouts.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {tryouts.map((tryout) => (
+            <TryoutCard
+              key={tryout.id}
+              id={tryout.id}
+              title={tryout.title}
+              description={tryout.description ?? ""}
+              duration={tryout.durationMinutes}
+              totalQuestions={tryout._count.questions}
+              isPublished={tryout.isPublished}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed p-10 text-center">
+          <p className="font-medium">Belum ada tryout tersedia.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Silakan kembali lagi nanti.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

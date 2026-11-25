@@ -19,7 +19,6 @@ type ResultPageProps = {
 export default async function ResultPage({ params }: ResultPageProps) {
   const { id } = await params;
 
-  // Verifikasi user
   const supabase = await createClient();
 
   const {

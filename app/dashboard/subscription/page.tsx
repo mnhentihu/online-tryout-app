@@ -57,7 +57,6 @@ export default async function SubscriptionPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Subscription</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -65,7 +64,6 @@ export default async function SubscriptionPage() {
         </p>
       </div>
 
-      {/* Current Subscription */}
       <div className="rounded-2xl border bg-card p-6 sm:p-8">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
           <div>
@@ -133,7 +131,6 @@ export default async function SubscriptionPage() {
         </div>
       </div>
 
-      {/* Subscription History */}
       <section className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold">Riwayat Langganan</h2>

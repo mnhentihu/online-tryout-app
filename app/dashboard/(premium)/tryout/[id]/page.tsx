@@ -20,7 +20,6 @@ export default async function TryoutDetailPage({
 }) {
   const { id } = await params;
 
-  // Ambil user yang sedang login
   const supabase = await createClient();
 
   const {
@@ -50,7 +49,6 @@ export default async function TryoutDetailPage({
     notFound();
   }
 
-  // Ambil pengerjaan terakhir dan nilai terbaik secara bersamaan
   const [latestAttempt, bestAttempt] = await Promise.all([
     prisma.tryoutAttempt.findFirst({
       where: {
@@ -155,7 +153,6 @@ export default async function TryoutDetailPage({
                 </p>
               </div>
 
-              {/* Nilai terbaik */}
               <div className="rounded-xl border p-4">
                 <div className="mb-3 flex items-center gap-2 text-amber-500">
                   <Trophy size={18} />

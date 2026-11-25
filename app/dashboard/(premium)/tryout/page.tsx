@@ -37,7 +37,7 @@ export default async function TryoutPage() {
           <input
             type="text"
             placeholder="Cari tryout..."
-            className="h-10 w-full rounded-lg border bg-white pl-10 pr-4 text-sm outline-none focus:border-blue-500 dark:bg-slate-950"
+            className="h-10 w-full rounded-lg border  pl-10 pr-4 text-sm outline-none focus:border-blue-500 dark:bg-slate-950"
           />
         </div>
 

@@ -57,6 +57,7 @@ export default async function SubscriptionPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Subscription</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -69,7 +70,7 @@ export default async function SubscriptionPage() {
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
           <div>
             <div className="mb-4 flex items-center gap-2">
-              <Crown className="size-6 text-yellow-500" />
+              <Crown className="size-6 text-amber-400" />
               <span className="font-semibold">Paket Premium</span>
             </div>
 
@@ -84,7 +85,7 @@ export default async function SubscriptionPage() {
             </p>
           </div>
 
-          <div className="rounded-xl bg-muted p-5 sm:min-w-44">
+          <div className="rounded-xl border bg-muted/50 p-5 sm:min-w-44">
             <p className="text-sm text-muted-foreground">Sisa masa aktif</p>
             <p className="mt-1 text-3xl font-bold">
               {remainingDays}
@@ -124,7 +125,7 @@ export default async function SubscriptionPage() {
         <div className="mt-6">
           <Link
             href="/dashboard/redeem"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
           >
             <Ticket className="size-4" />
             Perpanjang Langganan
@@ -141,7 +142,7 @@ export default async function SubscriptionPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border">
+        <div className="overflow-x-auto rounded-xl border bg-card">
           <table className="w-full min-w-[650px] text-sm">
             <thead className="bg-muted/50">
               <tr className="text-left">
@@ -157,7 +158,6 @@ export default async function SubscriptionPage() {
               {subscriptions.length > 0 ? (
                 subscriptions.map((item) => {
                   const isActive = item.startsAt <= now && item.endsAt > now;
-
                   const isUpcoming = item.startsAt > now;
 
                   const status = isActive
@@ -176,11 +176,11 @@ export default async function SubscriptionPage() {
                       <td className="p-4">{formatDate(item.endsAt)}</td>
                       <td className="p-4">
                         <span
-                          className={`rounded-full px-3 py-1 text-xs ${
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${
                             isActive
-                              ? "bg-green-500/10 text-green-600"
+                              ? "bg-green-500/10 text-green-400"
                               : isUpcoming
-                                ? "bg-blue-500/10 text-blue-600"
+                                ? "bg-blue-500/10 text-blue-400"
                                 : "bg-muted text-muted-foreground"
                           }`}
                         >

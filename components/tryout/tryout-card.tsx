@@ -19,7 +19,7 @@ export default function TryoutCard({
   isPublished,
 }: TryoutCardProps) {
   return (
-    <div className="flex flex-col rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md dark:bg-slate-950">
+    <div className="flex flex-col rounded-xl border  p-5 shadow-sm transition hover:shadow-md dark:bg-slate-950">
       <div className="flex items-start justify-between gap-3">
         <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
           <ClipboardList size={22} />

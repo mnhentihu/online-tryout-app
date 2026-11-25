@@ -5,6 +5,7 @@ import RedeemForm from "@/components/subscription/redeem-form";
 export default function RedeemPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Redeem Code</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -15,6 +16,7 @@ export default function RedeemPage() {
 
       <RedeemForm />
 
+      {/* Instructions */}
       <div className="rounded-xl border bg-card p-6">
         <h3 className="mb-4 font-semibold">Cara Menggunakan Kode</h3>
 
@@ -35,10 +37,11 @@ export default function RedeemPage() {
         </div>
       </div>
 
+      {/* Back Navigation */}
       <div className="flex justify-center">
         <Link
           href="/dashboard/subscription"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
           Kembali ke Subscription

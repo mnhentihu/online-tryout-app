@@ -68,18 +68,18 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-white transition-transform duration-300 dark:bg-slate-950 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-background transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full"
         } lg:static lg:translate-x-0`}
       >
         <div className="flex h-16 items-center justify-between border-b px-6">
           <Link href="/dashboard" className="text-2xl font-bold tracking-tight">
-            TryOut<span className="text-blue-600">.</span>
+            TryOut<span className="text-blue-500">.</span>
           </Link>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 hover:bg-muted lg:hidden"
+            className="rounded-lg p-2 transition hover:bg-muted lg:hidden"
             aria-label="Tutup sidebar"
           >
             <X size={20} />

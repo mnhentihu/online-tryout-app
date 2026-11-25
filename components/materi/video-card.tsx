@@ -20,7 +20,7 @@ export default function VideoCard({
   category,
 }: VideoCardProps) {
   return (
-    <div className="overflow-hidden rounded-xl border bg-white transition hover:-translate-y-1 hover:shadow-md dark:bg-slate-950">
+    <div className="overflow-hidden rounded-xl border  transition hover:-translate-y-1 hover:shadow-md dark:bg-slate-950">
       <div className="relative aspect-video bg-slate-100 dark:bg-slate-900">
         <Image
           src={thumbnail}
@@ -31,7 +31,7 @@ export default function VideoCard({
         />
 
         <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-          <div className="flex size-12 items-center justify-center rounded-full bg-white/90 text-blue-600 shadow">
+          <div className="flex size-12 items-center justify-center rounded-full /90 text-blue-600 shadow">
             <Play size={21} fill="currentColor" />
           </div>
         </div>

@@ -24,26 +24,15 @@ export default async function DashboardPage() {
 
   const [profile, materialCount, tryoutCount, isPremium] = await Promise.all([
     prisma.userProfile.findUnique({
-      where: {
-        userId: user.id,
-      },
-      select: {
-        name: true,
-      },
+      where: { userId: user.id },
+      select: { name: true },
     }),
-
     prisma.learningMaterial.count({
-      where: {
-        isPublished: true,
-      },
+      where: { isPublished: true },
     }),
-
     prisma.tryout.count({
-      where: {
-        isPublished: true,
-      },
+      where: { isPublished: true },
     }),
-
     hasActiveSubscription(user.id),
   ]);
 
@@ -66,6 +55,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
+      {/* Welcome */}
       <section>
         <h2 className="text-2xl font-bold tracking-tight">
           Selamat Datang, {userName}!
@@ -83,7 +73,7 @@ export default async function DashboardPage() {
           return (
             <div
               key={stat.title}
-              className="rounded-xl border bg-white p-5 shadow-sm dark:bg-slate-950"
+              className="rounded-xl border bg-card p-5 shadow-sm"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -94,7 +84,7 @@ export default async function DashboardPage() {
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+                <div className="rounded-xl bg-blue-500/10 p-3 text-blue-400">
                   <Icon size={24} />
                 </div>
               </div>
@@ -128,21 +118,21 @@ export default async function DashboardPage() {
           </div>
         </section>
       ) : (
-        <section className="rounded-xl border border-amber-200 bg-amber-50 p-6 dark:border-amber-900 dark:bg-amber-950/30 sm:p-8">
+        <section className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-3 flex items-center gap-2 text-amber-700 dark:text-amber-400">
+              <div className="mb-3 flex items-center gap-2 text-amber-400">
                 <LockKeyhole size={22} />
                 <span className="text-sm font-semibold">
                   Akses Premium Belum Aktif
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
+              <h3 className="text-xl font-bold text-foreground">
                 Aktifkan Akses Belajarmu!
               </h3>
 
-              <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Kamu belum memiliki akses premium. Gunakan redeem code untuk
                 mengaktifkan akses ke video pembelajaran dan simulasi tryout.
               </p>
@@ -150,7 +140,7 @@ export default async function DashboardPage() {
 
             <Link
               href="/dashboard/redeem"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-amber-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-700"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-amber-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-500"
             >
               Redeem Code
               <ArrowRight size={17} />
@@ -163,9 +153,9 @@ export default async function DashboardPage() {
       <section className="grid gap-4 sm:grid-cols-2">
         <Link
           href="/dashboard/materi"
-          className="group rounded-xl border bg-white p-5 transition hover:border-blue-500 dark:bg-slate-950"
+          className="group rounded-xl border bg-card p-5 transition hover:border-blue-500"
         >
-          <BookOpen className="mb-4 text-blue-600" size={24} />
+          <BookOpen className="mb-4 text-blue-400" size={24} />
 
           <h3 className="font-semibold">Pelajari Materi</h3>
 
@@ -173,16 +163,16 @@ export default async function DashboardPage() {
             Akses video pembelajaran untuk meningkatkan pemahamanmu.
           </p>
 
-          <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-600">
+          <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-400">
             Lihat Materi <ArrowRight size={16} />
           </span>
         </Link>
 
         <Link
           href="/dashboard/tryout"
-          className="group rounded-xl border bg-white p-5 transition hover:border-blue-500 dark:bg-slate-950"
+          className="group rounded-xl border bg-card p-5 transition hover:border-blue-500"
         >
-          <ClipboardList className="mb-4 text-blue-600" size={24} />
+          <ClipboardList className="mb-4 text-blue-400" size={24} />
 
           <h3 className="font-semibold">Kerjakan Tryout</h3>
 
@@ -190,7 +180,7 @@ export default async function DashboardPage() {
             Latih kemampuanmu melalui simulasi ujian online.
           </p>
 
-          <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-600">
+          <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-400">
             Lihat Tryout <ArrowRight size={16} />
           </span>
         </Link>

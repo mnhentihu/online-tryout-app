@@ -99,7 +99,7 @@ export default async function TryoutDetailPage({
         Kembali ke daftar tryout
       </Link>
 
-      <div className="rounded-xl border bg-white p-6 dark:bg-slate-950 sm:p-8">
+      <div className="rounded-xl border  p-6 dark:bg-slate-950 sm:p-8">
         <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
           <ClipboardList size={25} />
         </div>

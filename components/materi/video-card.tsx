@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Clock, Play } from "lucide-react";
 
 type VideoCardProps = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   thumbnail: string;
@@ -55,6 +55,7 @@ export default function VideoCard({
             {description}
           </p>
         </div>
+
         <Link
           href={`/dashboard/materi/${id}`}
           className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"

@@ -1,49 +1,30 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, PlayCircle, BookOpen } from "lucide-react";
 import { notFound } from "next/navigation";
-
-// Dummy data sementara
-const materials = [
-  {
-    id: "1",
-    title: "Pengenalan JavaScript",
-    description:
-      "Mempelajari dasar-dasar JavaScript, sejarah, fungsi, dan penerapannya dalam pengembangan web.",
-    category: "JavaScript",
-    duration: "15 menit",
-    videoUrl: "https://www.youtube.com/embed/VIDEO_ID",
-    order: 1,
-  },
-  {
-    id: "2",
-    title: "Dasar-Dasar React",
-    description: "Memahami konsep dasar React, component, props, dan state.",
-    category: "React",
-    duration: "25 menit",
-    videoUrl: "https://www.youtube.com/embed/VIDEO_ID",
-    order: 2,
-  },
-  {
-    id: "3",
-    title: "Pengenalan Next.js",
-    description: "Mengenal Next.js dan memahami dasar penggunaan App Router.",
-    category: "Next.js",
-    duration: "30 menit",
-    videoUrl: "https://www.youtube.com/embed/VIDEO_ID",
-    order: 3,
-  },
-];
+import { prisma } from "@/lib/prisma";
 
 type MaterialDetailPageProps = {
   params: Promise<{ id: string }>;
 };
+
+function formatDuration(seconds: number | null) {
+  if (!seconds) return "Durasi tidak tersedia";
+
+  const minutes = Math.ceil(seconds / 60);
+  return `${minutes} menit`;
+}
 
 export default async function MaterialDetailPage({
   params,
 }: MaterialDetailPageProps) {
   const { id } = await params;
 
-  const material = materials.find((item) => item.id === id);
+  const material = await prisma.learningMaterial.findFirst({
+    where: {
+      id,
+      isPublished: true,
+    },
+  });
 
   if (!material) {
     notFound();
@@ -62,7 +43,7 @@ export default async function MaterialDetailPage({
       <div>
         <div className="mb-3 flex items-center gap-2 text-sm text-primary">
           <BookOpen className="size-4" />
-          {material.category}
+          Materi Pembelajaran
         </div>
 
         <h1 className="text-2xl font-bold">{material.title}</h1>
@@ -89,7 +70,7 @@ export default async function MaterialDetailPage({
           <PlayCircle className="size-5 text-primary" />
           <div>
             <p className="text-xs text-muted-foreground">Materi ke</p>
-            <p className="font-medium">{material.order}</p>
+            <p className="font-medium">{material.sortOrder}</p>
           </div>
         </div>
 
@@ -97,7 +78,9 @@ export default async function MaterialDetailPage({
           <Clock className="size-5 text-primary" />
           <div>
             <p className="text-xs text-muted-foreground">Durasi video</p>
-            <p className="font-medium">{material.duration}</p>
+            <p className="font-medium">
+              {formatDuration(material.durationSeconds)}
+            </p>
           </div>
         </div>
       </div>

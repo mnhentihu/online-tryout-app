@@ -1,60 +1,24 @@
 import VideoCard from "@/components/materi/video-card";
 import { Search } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-const materials = [
-  {
-    id: 1,
-    title: "Pengenalan HTML dan CSS",
-    description:
-      "Mempelajari dasar HTML dan CSS untuk membangun halaman website.",
-    thumbnail: "https://placehold.co/600x340/172554/FFFFFF?text=HTML+%26+CSS",
-    duration: "15 menit",
-    category: "Web Development",
-  },
-  {
-    id: 2,
-    title: "Dasar JavaScript",
-    description:
-      "Memahami variabel, tipe data, function, dan dasar pemrograman JavaScript.",
-    thumbnail: "https://placehold.co/600x340/713f12/FFFFFF?text=JavaScript",
-    duration: "20 menit",
-    category: "JavaScript",
-  },
-  {
-    id: 3,
-    title: "Pengenalan React JS",
-    description: "Mengenal component, props, state, dan konsep dasar React.",
-    thumbnail: "https://placehold.co/600x340/164e63/FFFFFF?text=React+JS",
-    duration: "25 menit",
-    category: "Frontend",
-  },
-  {
-    id: 4,
-    title: "Belajar Node.js",
-    description: "Mengenal Node.js dan penggunaannya untuk membangun backend.",
-    thumbnail: "https://placehold.co/600x340/14532d/FFFFFF?text=Node.js",
-    duration: "30 menit",
-    category: "Backend",
-  },
-  {
-    id: 5,
-    title: "Database dan SQL",
-    description: "Memahami database relasional dan dasar penggunaan SQL.",
-    thumbnail: "https://placehold.co/600x340/581c87/FFFFFF?text=Database",
-    duration: "18 menit",
-    category: "Database",
-  },
-  {
-    id: 6,
-    title: "Pengenalan Next.js",
-    description: "Memahami routing, rendering, dan konsep dasar Next.js.",
-    thumbnail: "https://placehold.co/600x340/334155/FFFFFF?text=Next.js",
-    duration: "22 menit",
-    category: "Frontend",
-  },
-];
+function formatDuration(seconds: number | null) {
+  if (!seconds) return "Durasi tidak tersedia";
 
-export default function MateriPage() {
+  const minutes = Math.ceil(seconds / 60);
+  return `${minutes} menit`;
+}
+
+export default async function MateriPage() {
+  const materials = await prisma.learningMaterial.findMany({
+    where: {
+      isPublished: true,
+    },
+    orderBy: {
+      sortOrder: "asc",
+    },
+  });
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <div>
@@ -84,19 +48,31 @@ export default function MateriPage() {
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {materials.map((material) => (
-          <VideoCard
-            key={material.id}
-            id={material.id}
-            title={material.title}
-            description={material.description}
-            thumbnail={material.thumbnail}
-            duration={material.duration}
-            category={material.category}
-          />
-        ))}
-      </div>
+      {materials.length === 0 ? (
+        <div className="rounded-xl border border-dashed p-10 text-center">
+          <p className="font-medium">Belum ada materi tersedia</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Materi pembelajaran akan ditampilkan di sini.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {materials.map((material) => (
+            <VideoCard
+              key={material.id}
+              id={material.id}
+              title={material.title}
+              description={material.description ?? ""}
+              thumbnail={
+                material.thumbnailUrl ??
+                "https://placehold.co/600x340/172554/FFFFFF?text=Learning+Material"
+              }
+              duration={formatDuration(material.durationSeconds)}
+              category="Materi Pembelajaran"
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

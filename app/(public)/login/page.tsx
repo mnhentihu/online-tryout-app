@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LoginForm from "@/components/auth/login-form";
 
 export default function LoginPage() {
   return (
@@ -19,41 +20,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="space-y-5">
-            <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-medium">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="nama@email.com"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-2 block text-sm font-medium"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Masukkan password"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-
-            <button
-              type="button"
-              className="w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold transition hover:bg-blue-500"
-            >
-              Masuk
-            </button>
-          </div>
+          <LoginForm />
 
           <div className="relative my-7">
             <div className="absolute inset-0 flex items-center">

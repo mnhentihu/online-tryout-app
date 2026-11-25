@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RegisterForm from "@/components/auth/register-form";
 
 export default function RegisterPage() {
   return (
@@ -20,66 +21,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-5">
-            <div>
-              <label htmlFor="name" className="mb-2 block text-sm font-medium">
-                Nama Lengkap
-              </label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Masukkan nama lengkap"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-medium">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="nama@email.com"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-2 block text-sm font-medium"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Minimal 8 karakter"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="mb-2 block text-sm font-medium"
-              >
-                Konfirmasi Password
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                placeholder="Ulangi password"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-
-            <button
-              type="button"
-              className="w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold transition hover:bg-blue-500"
-            >
-              Daftar
-            </button>
+            <RegisterForm />
           </div>
 
           <div className="relative my-7">

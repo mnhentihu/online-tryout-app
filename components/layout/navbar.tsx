@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Bell, Menu, UserRound } from "lucide-react";
+import { logoutAction } from "@/actions/auth.action";
 
 type NavbarProps = {
   onMenuClick: () => void;
@@ -55,6 +56,14 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             <p className="text-sm font-medium">Pengguna</p>
             <p className="text-xs text-muted-foreground">Member</p>
           </div>
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="w-full rounded-lg px-4 py-2 text-left text-sm transition hover:bg-slate-800"
+            >
+              Keluar
+            </button>
+          </form>
         </div>
       </div>
     </header>

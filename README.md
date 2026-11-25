@@ -6,7 +6,7 @@ Aplikasi ini dibuat untuk memberikan pengalaman mengerjakan tryout secara online
 
 ## Demo
 
-- **Website:** [Masukkan URL deployment di sini]
+- **Website:** (https://techtest-online-tryout-app.vercel.app/)
 - **Repository:** (https://github.com/mnhentihu/online-tryout-app)
 
 ## Teknologi yang Digunakan

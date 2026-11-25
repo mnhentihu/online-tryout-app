@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Clock, Play } from "lucide-react";
 
 type VideoCardProps = {
+  id: number;
   title: string;
   description: string;
   thumbnail: string;
@@ -10,6 +12,7 @@ type VideoCardProps = {
 };
 
 export default function VideoCard({
+  id,
   title,
   description,
   thumbnail,
@@ -52,13 +55,12 @@ export default function VideoCard({
             {description}
           </p>
         </div>
-
-        <button
-          type="button"
-          className="w-full rounded-lg border py-2 text-sm font-medium transition hover:bg-muted"
+        <Link
+          href={`/dashboard/materi/${id}`}
+          className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
           Lihat Materi
-        </button>
+        </Link>
       </div>
     </div>
   );

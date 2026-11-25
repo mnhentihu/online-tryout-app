@@ -88,6 +88,7 @@ export default function MateriPage() {
         {materials.map((material) => (
           <VideoCard
             key={material.id}
+            id={material.id}
             title={material.title}
             description={material.description}
             thumbnail={material.thumbnail}

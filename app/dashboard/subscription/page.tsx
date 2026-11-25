@@ -1,34 +1,59 @@
 import Link from "next/link";
 import { CalendarDays, Clock, Crown, Ticket } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
 
-export default function SubscriptionPage() {
-  // Dummy data
-  const subscription = {
-    isActive: true,
-    planName: "Premium",
-    startsAt: "20 November 2026",
-    endsAt: "20 Desember 2026",
-    remainingDays: 25,
-  };
+const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "Asia/Jakarta",
+});
 
-  const history = [
-    {
-      id: 1,
-      code: "XXXX-XXXX-XXXX",
-      duration: "30 Hari",
-      startsAt: "20 November 2026",
-      endsAt: "20 Desember 2026",
-      status: "Aktif",
+function formatDate(date: Date) {
+  return dateFormatter.format(date);
+}
+
+function getRemainingDays(endsAt: Date, now: Date) {
+  const difference = endsAt.getTime() - now.getTime();
+
+  return Math.max(0, Math.ceil(difference / (1000 * 60 * 60 * 24)));
+}
+
+export default async function SubscriptionPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const now = new Date();
+
+  const subscriptions = await prisma.subscription.findMany({
+    where: {
+      userId: user.id,
     },
-    {
-      id: 2,
-      code: "YYYY-YYYY-YYYY",
-      duration: "30 Hari",
-      startsAt: "20 Oktober 2026",
-      endsAt: "19 November 2026",
-      status: "Berakhir",
+    include: {
+      redeemCode: {
+        select: {
+          durationDays: true,
+        },
+      },
     },
-  ];
+    orderBy: {
+      startsAt: "desc",
+    },
+  });
+
+  const activeSubscription = subscriptions.find(
+    (subscription) => subscription.startsAt <= now && subscription.endsAt > now,
+  );
+
+  const remainingDays = activeSubscription
+    ? getRemainingDays(activeSubscription.endsAt, now)
+    : 0;
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -39,6 +64,7 @@ export default function SubscriptionPage() {
         </p>
       </div>
 
+      {/* Current Subscription */}
       <div className="rounded-2xl border bg-card p-6 sm:p-8">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
           <div>
@@ -48,11 +74,11 @@ export default function SubscriptionPage() {
             </div>
 
             <h2 className="text-3xl font-bold">
-              {subscription.isActive ? "Aktif" : "Tidak Aktif"}
+              {activeSubscription ? "Aktif" : "Tidak Aktif"}
             </h2>
 
             <p className="mt-2 text-sm text-muted-foreground">
-              {subscription.isActive
+              {activeSubscription
                 ? "Kamu dapat menikmati seluruh fitur premium."
                 : "Redeem kode untuk mengaktifkan langganan."}
             </p>
@@ -61,7 +87,7 @@ export default function SubscriptionPage() {
           <div className="rounded-xl bg-muted p-5 sm:min-w-44">
             <p className="text-sm text-muted-foreground">Sisa masa aktif</p>
             <p className="mt-1 text-3xl font-bold">
-              {subscription.remainingDays}
+              {remainingDays}
               <span className="ml-1 text-sm font-normal">hari</span>
             </p>
           </div>
@@ -74,7 +100,11 @@ export default function SubscriptionPage() {
             <CalendarDays className="size-5 text-muted-foreground" />
             <div>
               <p className="text-xs text-muted-foreground">Tanggal mulai</p>
-              <p className="text-sm font-medium">{subscription.startsAt}</p>
+              <p className="text-sm font-medium">
+                {activeSubscription
+                  ? formatDate(activeSubscription.startsAt)
+                  : "-"}
+              </p>
             </div>
           </div>
 
@@ -82,7 +112,11 @@ export default function SubscriptionPage() {
             <Clock className="size-5 text-muted-foreground" />
             <div>
               <p className="text-xs text-muted-foreground">Tanggal berakhir</p>
-              <p className="text-sm font-medium">{subscription.endsAt}</p>
+              <p className="text-sm font-medium">
+                {activeSubscription
+                  ? formatDate(activeSubscription.endsAt)
+                  : "-"}
+              </p>
             </div>
           </div>
         </div>
@@ -98,6 +132,7 @@ export default function SubscriptionPage() {
         </div>
       </div>
 
+      {/* Subscription History */}
       <section className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold">Riwayat Langganan</h2>
@@ -110,7 +145,7 @@ export default function SubscriptionPage() {
           <table className="w-full min-w-[650px] text-sm">
             <thead className="bg-muted/50">
               <tr className="text-left">
-                <th className="p-4 font-medium">Kode Redeem</th>
+                <th className="p-4 font-medium">Aktivasi</th>
                 <th className="p-4 font-medium">Durasi</th>
                 <th className="p-4 font-medium">Mulai</th>
                 <th className="p-4 font-medium">Berakhir</th>
@@ -119,25 +154,52 @@ export default function SubscriptionPage() {
             </thead>
 
             <tbody>
-              {history.map((item) => (
-                <tr key={item.id} className="border-t">
-                  <td className="p-4 font-mono">{item.code}</td>
-                  <td className="p-4">{item.duration}</td>
-                  <td className="p-4">{item.startsAt}</td>
-                  <td className="p-4">{item.endsAt}</td>
-                  <td className="p-4">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs ${
-                        item.status === "Aktif"
-                          ? "bg-green-500/10 text-green-600"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+              {subscriptions.length > 0 ? (
+                subscriptions.map((item) => {
+                  const isActive = item.startsAt <= now && item.endsAt > now;
+
+                  const isUpcoming = item.startsAt > now;
+
+                  const status = isActive
+                    ? "Aktif"
+                    : isUpcoming
+                      ? "Akan Datang"
+                      : "Berakhir";
+
+                  return (
+                    <tr key={item.id} className="border-t">
+                      <td className="p-4 font-medium">Aktivasi Premium</td>
+                      <td className="p-4">
+                        {item.redeemCode.durationDays} Hari
+                      </td>
+                      <td className="p-4">{formatDate(item.startsAt)}</td>
+                      <td className="p-4">{formatDate(item.endsAt)}</td>
+                      <td className="p-4">
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs ${
+                            isActive
+                              ? "bg-green-500/10 text-green-600"
+                              : isUpcoming
+                                ? "bg-blue-500/10 text-blue-600"
+                                : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="p-8 text-center text-muted-foreground"
+                  >
+                    Belum ada riwayat langganan.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

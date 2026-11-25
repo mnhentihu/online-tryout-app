@@ -7,7 +7,7 @@ Aplikasi ini dibuat untuk memberikan pengalaman mengerjakan tryout secara online
 ## Demo
 
 - **Website:** [Masukkan URL deployment di sini]
-- **Repository:** [Masukkan URL repository di sini]
+- **Repository:** (https://github.com/mnhentihu/online-tryout-app)
 
 ## Teknologi yang Digunakan
 
